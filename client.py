@@ -7,13 +7,24 @@ while True:
 		s=socket.socket()
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		port=8888
-		s.connect(('172.16.165.195',port))
+		s.connect(('127.0.0.1',port))
 		print(s)
 		while True:
 			x=input('$ ')
-			if x is not 'STOP':
+			if x[:6] == 'filetx':
 				s.send(x.encode())
-				print(str(s.recv(8192),"utf-8"))
+				gh=s.recv(1024)
+				try:
+					f=open(x[7:],'r')
+					for i in f:
+						s.send(str.encode(i))
+					f.close()
+				except:
+					print("File not found")
+				s.send(str.encode('filetxd'))
+			elif x != 'STOP':
+				s.send(x.encode())
+				print(str(s.recv(1024),"utf-8"))
 			else:
 				break
 	except KeyboardInterrupt:

